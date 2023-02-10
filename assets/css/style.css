@@ -1,0 +1,54 @@
+html {
+	font-size: 14px;
+	background-color: rgb(151 155 105);
+	width: 100vw;
+	font-family: "Lucida Console", "Courier New", monospace;
+}
+
+h1 {
+	font-size: 4.5rem;
+}
+
+h2 {
+	font-size: 2rem;
+}
+
+#page {
+	margin: auto;
+	width: 90%;
+	background-color: Olive;
+	border-width: 5px;
+	border-style: solid;
+	border-color: DarkSlateGrey;
+}
+
+.entete {
+	text-align: center;
+}
+
+#aboutme {
+	margin: 15px;
+	border-width: 5px;
+	border-style: solid;
+	border-color: DarkSlateGrey;
+	background-color: rgb(206 206 156);
+	padding: 4rem;
+}
+
+footer {
+	text-align: center;
+}
+
+table, th, td {
+  border: 1px solid;
+}
+
+td, th {
+	padding: 1px 8px;
+}
+
+#logo {
+	text-align: left;
+}
+
+
