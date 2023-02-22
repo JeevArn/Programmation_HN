@@ -51,4 +51,14 @@ td, th {
 	text-align: left;
 }
 
+.fade {
+	background-color: DarkKhaki;
+	color: Black;
+	transition: background-color 1s;
+	font-family: "Lucida Console", "Courier New", monospace;
+}
+
+.fade:hover {
+	background-color: rgb(198 213 74);
+}
 
