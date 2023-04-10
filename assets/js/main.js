@@ -43,12 +43,13 @@ window.onload = function() {
                 fileDisplayArea.innerText = reader.result;
                 segText();
                 let nbTokens = global_var_tokens.length;
-                document.getElementById("logger2").innerHTML = '<span class="infolog">Nombre de tokens : ' + nbTokens + ' </span>';
+                let nbLines = global_var_lines.length;
+                document.getElementById("logger2").innerHTML = '<span class="infolog">Nombre de tokens : ' + nbTokens + '<br>Nombre de lignes : ' + nbLines +' </span>';
             }
 
             // on lit concrètement le fichier.
             // Cette lecture lancera automatiquement la fonction "onload" juste au-dessus.
-            reader.readAsText(file);    
+            reader.readAsText(file);
 
             document.getElementById("logger1").innerHTML = '<span class="infolog">Fichier chargé avec succès</span>';
         } else { // pas un fichier texte : message d'erreur.
@@ -60,12 +61,12 @@ window.onload = function() {
 
 function showHide_aide() {
 	let div = document.getElementById("aide");
-	let b = document.getElementById("button_aide").innerHTML; 
+	let b = document.getElementById("button_aide").innerHTML;
   		if (div.style.display === "none") {
    			div.style.display = "block";
 	  		let change = b.replace("Afficher","Masquer");
 	  		document.getElementById("button_aide").innerHTML = change;
-	  		} 	
+	  		}
 		else {
 			div.style.display = "none";
 			var change = b.replace("Masquer","Afficher");
@@ -76,80 +77,148 @@ function showHide_aide() {
 // VERSION PROF segText() ------------------------------------------------------------------------
 
 function segText() {
-    let text = document.getElementById("fileDisplayArea").innerText;
-    let delim = document.getElementById("delimID").value;
-    let display = document.getElementById("page-analysis");
-
-    let regex_delim = new RegExp(
-        "["
-        + delim
-            .replace("-", "\\-") // le tiret n'est pas à la fin : il faut l'échapper, sinon erreur sur l'expression régulière
-            .replace("[", "\\[").replace("]", "\\]") // à changer sinon regex fautive, exemple : [()[]{}] doit être [()\[\]{}], on doit "échapper" les crochets, sinon on a un symbole ] qui arrive trop tôt.
-        + "\\s" // on ajoute tous les symboles d'espacement (retour à la ligne, etc)
-        + "]+" // on ajoute le + au cas où plusieurs délimiteurs sont présents : évite les tokens vides
-    );
-
-    let tokens = text.split(regex_delim);
-    tokens = tokens.filter(x => x.trim() != ""); // on s'assure de ne garder que des tokens "non vides"
-
-    global_var_tokens = tokens; // décommenter pour vérifier l'état des tokens dans la console développeurs sur le navigateur
-    display.innerHTML = tokens.join(" ");
+    if (document.getElementById('fileDisplayArea').innerHTML==""){
+        //alert("Il faut d'abord charger un fichier .txt !"); //autre possibilité
+        document.getElementById('logger3').innerHTML="Il faut d'abord charger un fichier .txt !";
+    } else {
+        document.getElementById('logger3').innerHTML="";
+        let text = document.getElementById("fileDisplayArea").innerText;
+        let delim = document.getElementById("delimID").value;
+        let display = document.getElementById("page-analysis");
+    
+        let regex_delim = new RegExp(
+            "["
+            + delim
+                .replace("-", "\\-") // le tiret n'est pas à la fin : il faut l'échapper, sinon erreur sur l'expression régulière
+                .replace("[", "\\[").replace("]", "\\]") // à changer sinon regex fautive, exemple : [()[]{}] doit être [()\[\]{}], on doit "échapper" les crochets, sinon on a un symbole ] qui arrive trop tôt.
+            + "\\s" // on ajoute tous les symboles d'espacement (retour à la ligne, etc)
+            + "]+" // on ajoute le + au cas où plusieurs délimiteurs sont présents : évite les tokens vides
+        );
+    
+        let tokens = text.split(regex_delim);
+        tokens = tokens.filter(x => x.trim() != ""); // on s'assure de ne garder que des tokens "non vides"
+        let lines = text.split(/\r?\n/g);
+        lines = lines.filter(line => line.trim() != "");
+    
+        global_var_tokens = tokens; // décommenter pour vérifier l'état des tokens dans la console développeurs sur le navigateur
+        global_var_lines = lines;
+        display.innerHTML = tokens.join(" ");
+    }
 }
-//----------------------------------------------------------------------------
 
-
-/* MA VERSION segText() -------------------------------------------------------
+/*
+//MA VERSION segText() --------------------------------------------
+//qui fonctionne correctement après avoir changé .innerHTML et .textContent pour .innerText
 function segText() {
-	let texte = document.getElementById("fileDisplayArea").innerHTML; // ou textContent pour retirer les balises inutiles mais dans ce cas pb avec retours chariot qui ne sont pas remplacés par des espaces
+	let texte = document.getElementById("fileDisplayArea").innerText; // ou textContent pour retirer les balises inutiles mais dans ce cas pb avec retours chariot qui ne sont pas remplacés par des espaces // même pb avec innerHTML
 	let delim = document.getElementById("delimID").value;
 	let speCar = /[\[\]\-\^\(\)\|\\\.\$\?\*\+\{\}\>\<]/g;
 	let delimEsc = delim.replace(speCar, '\\$&');
 	let regex = new RegExp("[" + delimEsc + "\\s" + "]", "g");
 	let segments = texte.split(regex);
-	let result = segments.join(" ");
+	tokens = segments.filter(x => x.trim() != "");
+	global_var_tokens = tokens;
+	let result = tokens.join(" ");
 	document.getElementById("page-analysis").innerHTML = result;
 }
 */
 
-/* 
-//ne fonctionne pas pour remplacer les retours à la ligne par des espaces
+/*Ma version 2 segText()
 function segText() {
-	let texte = document.getElementById("fileDisplayArea").textContent;
+	let texte = document.getElementById("fileDisplayArea").innerText;
 	let delim = document.getElementById("delimID").value;
 	let speCar = /[\[\]\-\^\(\)\|\\\.\$\?\*\+\{\}\>\<]/g;
 	let delimEsc = delim.replace(speCar, '\\$&');
 	let regex = new RegExp("[" + delimEsc + "]", "g");
 	let segments = texte.split(regex);
 	let result = segments.join(" ");
-	document.getElementById("page-analysis").innerHTML = result.replace(/(?:\r\n|\r|\n)/gm, " "); // pourtant la regex prend en compte les sauts de lignes ??
+	document.getElementById("page-analysis").innerHTML = result.replace(/(?:\r\n|\r|\n)/gm, " ");
 }
-----------------------------------------------------------------------------------*/
+
+// A RETENIR : différences .innerHTML  .textContent  .innerText
+//.innerHTML permet de récupérer ou définir le contenu HTML d'un élément, y compris les balises HTML.
+//.textContent permet de récupérer ou définir le contenu textuel d'un élément, en ignorant les balises HTML. Supprime les espaces supplémentaires et les retours chariot.
+//.innerText est similaire à .textContent, mais tient compte de la mise en forme CSS appliquée à l'élément, ce qui peut parfois affecter le texte affiché. Inclue des espaces et des retours chariot supplémentaires.
+*/
+
+//Dictionnaire-----------------------------------------------------------------
 
 function dictionnaire() {
-  let tokenFreq = {};
-  let tokens = global_var_tokens;
-  
-  // Compter la fréquence de chaque token
-  tokens.forEach(token => tokenFreq[token] = (tokenFreq[token] || 0) + 1);
-  
-  // Convertir l'objet en tableau de paires clé-valeur
-  let freqPairs = Object.entries(tokenFreq);
-  
-  // Trier le tableau par fréquence décroissante
-  freqPairs.sort((a, b) => b[1] - a[1]);
-  
-  // Ajouter l'entête du tableau
-  let tableArr = [['<b>Token</b>', '<b>Fréquence</b>']];
-  
-  // Créer un tableau de tableaux contenant les tokens et leurs fréquences
-  let tableData = freqPairs.map(pair => [pair[0], pair[1]]);
-  
-  // Concaténer les deux tableaux
-  let finalTable = tableArr.concat(tableData);
-  
-  // Créer le tableau HTML à partir du tableau final
-  let tableHtml = finalTable.map(row => '<tr><td>' + row.join('</td><td>') + '</td></tr>').join('');
-  
-  // Afficher le tableau HTML dans la page
-  document.getElementById('page-analysis').innerHTML = '<table>' + tableHtml + '</table>';
+    if (document.getElementById('fileDisplayArea').innerHTML==""){
+        //alert("Il faut d'abord charger un fichier .txt !");
+        document.getElementById('logger3').innerHTML="Il faut d'abord charger un fichier .txt !";
+    } else {
+        document.getElementById('logger3').innerHTML="";
+        let tokenFreq = {};
+        let tokens = global_var_tokens;
+          
+        // Compter la fréquence de chaque token
+        tokens.forEach(token => tokenFreq[token] = (tokenFreq[token] || 0) + 1);
+          
+        // Convertir l'objet en tableau de paires clé-valeur
+        let freqPairs = Object.entries(tokenFreq);
+          
+        // Trier le tableau par fréquence décroissante
+        freqPairs.sort((a, b) => b[1] - a[1]);
+          
+        // Ajouter l'entête du tableau
+        let tableArr = [['<b>Token</b>', '<b>Fréquence</b>']];
+          
+        // Créer un tableau de tableaux contenant les tokens et leurs fréquences
+        let tableData = freqPairs.map(pair => [pair[0], pair[1]]);
+          
+        // Concaténer les deux tableaux
+        let finalTable = tableArr.concat(tableData);
+          
+        // Créer le tableau HTML à partir du tableau final
+        let tableHtml = finalTable.map(row => '<tr><td>' + row.join('</td><td>') + '</td></tr>').join('');
+          
+        // Afficher le tableau HTML dans la page
+        document.getElementById('page-analysis').innerHTML = '<table>' + tableHtml + '</table>';
+    }
 }
+
+//GREP---------------------------------------------------------------------
+
+function grep() {
+    // Vérifier si un fichier .txt a été chargé
+    if (document.getElementById('fileDisplayArea').innerHTML == "") {
+        // Afficher un message d'erreur
+        document.getElementById('logger3').innerHTML = "Il faut d'abord charger un fichier .txt !";
+        } else {
+            // Récupérer la valeur du champ "pôle"
+            let poleInput = document.getElementById('poleID').value;
+            // Vérifier si un pôle a été saisi
+            if (poleInput == "") {
+            // Afficher un message d'erreur
+            document.getElementById('logger3').innerHTML = "Il faut d'abord entrer un pôle !";
+            } else {
+                // Créer une expression régulière à partir de la valeur du champ "pôle"
+                let poleRegex = new RegExp(poleInput, 'g');
+                // Initialiser la variable "resultat" avec l'entête du tableau
+                let resultat = "<tr><th>Ligne</th><th>Résultat</th></tr>";
+                // Parcourir chaque ligne du tableau "global_var_lines"
+                for (let i = 0; i < global_var_lines.length; i++) {
+                // Vérifier si la ligne correspond à la regex
+                if (global_var_lines[i].match(poleRegex)) {
+                // Ajouter le numéro de la ligne et le résultat correspondant au tableau "resultat"
+                let lineNumber = i + 1; // Ajouter 1 car les tableaux en JavaScript commencent à l'index 0
+                resultat += "<tr><td>" + lineNumber + "</td><td>" + global_var_lines[i].replace(poleRegex, "<font color='red'>$&</font>") + "</td></tr>";
+                }
+            }
+            // Vérifier si des résultats ont été trouvés
+            if (resultat == "<tr><th>Ligne</th><th>Résultat</th></tr>") {
+                // Effacer les résulats précédent
+                document.getElementById('page-analysis').innerHTML = "";
+                // Afficher un message d'erreur
+                document.getElementById('logger3').innerHTML = "Aucune correspondance trouvée.";
+                } else {
+                    // Effacer tout message d'erreur précédent
+                    document.getElementById('logger3').innerHTML = "";
+                    // Injecter le tableau résultant dans l'élément HTML
+                    document.getElementById('page-analysis').innerHTML = "<table>" + resultat + "</table>";
+                    }
+            }
+        }
+}
+
