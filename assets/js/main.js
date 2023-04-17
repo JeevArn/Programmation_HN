@@ -16,6 +16,22 @@ function maj() {
 	document.getElementById("holder1").innerHTML = text.toUpperCase();
 }
 
+function showHide_aboutme() {
+	let div = document.getElementById("aboutme");
+	let b = document.getElementById("button_aboutme").innerHTML;
+  		if (div.style.display === "none") {
+   			div.style.display = "block";
+	  		let change = b.replace("more","less");
+	  		document.getElementById("button_aboutme").innerHTML = change;
+	  		}
+		else {
+			div.style.display = "none";
+			var change = b.replace("less","more");
+	    	document.getElementById("button_aboutme").innerHTML = change;
+	    	}
+}
+
+
 //----------------------OUTIL D'ANALYSE des données dans un fichier-------------------------------
 
 window.onload = function() {
@@ -81,28 +97,32 @@ function segText() {
         //alert("Il faut d'abord charger un fichier .txt !"); //autre possibilité
         document.getElementById('logger3').innerHTML="Il faut d'abord charger un fichier .txt !";
     } else {
-        document.getElementById('logger3').innerHTML="";
-        let text = document.getElementById("fileDisplayArea").innerText;
-        let delim = document.getElementById("delimID").value;
-        let display = document.getElementById("page-analysis");
-    
-        let regex_delim = new RegExp(
-            "["
-            + delim
-                .replace("-", "\\-") // le tiret n'est pas à la fin : il faut l'échapper, sinon erreur sur l'expression régulière
-                .replace("[", "\\[").replace("]", "\\]") // à changer sinon regex fautive, exemple : [()[]{}] doit être [()\[\]{}], on doit "échapper" les crochets, sinon on a un symbole ] qui arrive trop tôt.
-            + "\\s" // on ajoute tous les symboles d'espacement (retour à la ligne, etc)
-            + "]+" // on ajoute le + au cas où plusieurs délimiteurs sont présents : évite les tokens vides
-        );
-    
-        let tokens = text.split(regex_delim);
-        tokens = tokens.filter(x => x.trim() != ""); // on s'assure de ne garder que des tokens "non vides"
-        let lines = text.split(/\r?\n/g);
-        lines = lines.filter(line => line.trim() != "");
-    
-        global_var_tokens = tokens; // décommenter pour vérifier l'état des tokens dans la console développeurs sur le navigateur
-        global_var_lines = lines;
-        display.innerHTML = tokens.join(" ");
+        if (document.getElementById("delimID").value === "") {
+            document.getElementById("logger3").innerHTML = '<span class="errorlog">Aucun délimiteur donné !</span>'
+        }else{
+            document.getElementById('logger3').innerHTML="";
+            let text = document.getElementById("fileDisplayArea").innerText;
+            let delim = document.getElementById("delimID").value;
+            let display = document.getElementById("page-analysis");
+        
+            let regex_delim = new RegExp(
+                "["
+                + delim
+                    .replace("-", "\\-") // le tiret n'est pas à la fin : il faut l'échapper, sinon erreur sur l'expression régulière
+                    .replace("[", "\\[").replace("]", "\\]") // à changer sinon regex fautive, exemple : [()[]{}] doit être [()\[\]{}], on doit "échapper" les crochets, sinon on a un symbole ] qui arrive trop tôt.
+                + "\\s" // on ajoute tous les symboles d'espacement (retour à la ligne, etc)
+                + "]+" // on ajoute le + au cas où plusieurs délimiteurs sont présents : évite les tokens vides
+            );
+        
+            let tokens = text.split(regex_delim);
+            tokens = tokens.filter(x => x.trim() != ""); // on s'assure de ne garder que des tokens "non vides"
+            let lines = text.split(/\r?\n/g);
+            lines = lines.filter(line => line.trim() != "");
+        
+            global_var_tokens = tokens; // décommenter pour vérifier l'état des tokens dans la console développeurs sur le navigateur
+            global_var_lines = lines;
+            display.innerHTML = tokens.join(" ");
+        }
     }
 }
 
@@ -134,58 +154,58 @@ function segText() {
 	let result = segments.join(" ");
 	document.getElementById("page-analysis").innerHTML = result.replace(/(?:\r\n|\r|\n)/gm, " ");
 }
-
+*/
 // A RETENIR : différences .innerHTML  .textContent  .innerText
 //.innerHTML permet de récupérer ou définir le contenu HTML d'un élément, y compris les balises HTML.
 //.textContent permet de récupérer ou définir le contenu textuel d'un élément, en ignorant les balises HTML. Supprime les espaces supplémentaires et les retours chariot.
 //.innerText est similaire à .textContent, mais tient compte de la mise en forme CSS appliquée à l'élément, ce qui peut parfois affecter le texte affiché. Inclue des espaces et des retours chariot supplémentaires.
-*/
+
 
 //Dictionnaire-----------------------------------------------------------------
-
 function dictionnaire() {
     if (document.getElementById('fileDisplayArea').innerHTML==""){
         //alert("Il faut d'abord charger un fichier .txt !");
         document.getElementById('logger3').innerHTML="Il faut d'abord charger un fichier .txt !";
-    } else {
-        document.getElementById('logger3').innerHTML="";
-        let tokenFreq = {};
-        let tokens = global_var_tokens;
-          
-        // Compter la fréquence de chaque token
-        tokens.forEach(token => tokenFreq[token] = (tokenFreq[token] || 0) + 1);
-          
-        // Convertir l'objet en tableau de paires clé-valeur
-        let freqPairs = Object.entries(tokenFreq);
-          
-        // Trier le tableau par fréquence décroissante
-        freqPairs.sort((a, b) => b[1] - a[1]);
-          
-        // Ajouter l'entête du tableau
-        let tableArr = [['<b>Token</b>', '<b>Fréquence</b>']];
-          
-        // Créer un tableau de tableaux contenant les tokens et leurs fréquences
-        let tableData = freqPairs.map(pair => [pair[0], pair[1]]);
-          
-        // Concaténer les deux tableaux
-        let finalTable = tableArr.concat(tableData);
-          
-        // Créer le tableau HTML à partir du tableau final
-        let tableHtml = finalTable.map(row => '<tr><td>' + row.join('</td><td>') + '</td></tr>').join('');
-          
-        // Afficher le tableau HTML dans la page
-        document.getElementById('page-analysis').innerHTML = '<table>' + tableHtml + '</table>';
-    }
+        } else {
+            document.getElementById('logger3').innerHTML="";
+            let tokenFreq = {};
+            let tokens = global_var_tokens;
+              
+            // Compter la fréquence de chaque token
+            tokens.forEach(token => tokenFreq[token] = (tokenFreq[token] || 0) + 1);
+              
+            // Convertir l'objet en tableau de paires clé-valeur
+            let freqPairs = Object.entries(tokenFreq);
+              
+            // Trier le tableau par fréquence décroissante
+            freqPairs.sort((a, b) => b[1] - a[1]);
+              
+            // Ajouter l'entête du tableau
+            let tableArr = [['<b>Token</b>', '<b>Fréquence</b>']];
+              
+            // Créer un tableau de tableaux contenant les tokens et leurs fréquences
+            let tableData = freqPairs.map(pair => [pair[0], pair[1]]);
+              
+            // Concaténer les deux tableaux
+            let finalTable = tableArr.concat(tableData);
+              
+            // Créer le tableau HTML à partir du tableau final
+            let tableHtml = finalTable.map(row => '<tr><td>' + row.join('</td><td>') + '</td></tr>').join('');
+              
+            // Afficher le tableau HTML dans la page
+            document.getElementById('page-analysis').innerHTML = '<table>' + tableHtml + '</table>';
+        }
 }
 
 //GREP---------------------------------------------------------------------
-
 function grep() {
     // Vérifier si un fichier .txt a été chargé
     if (document.getElementById('fileDisplayArea').innerHTML == "") {
         // Afficher un message d'erreur
         document.getElementById('logger3').innerHTML = "Il faut d'abord charger un fichier .txt !";
         } else {
+            // Effacer tout message d'erreur précédent
+            document.getElementById('logger3').innerHTML="";
             // Récupérer la valeur du champ "pôle"
             let poleInput = document.getElementById('poleID').value;
             // Vérifier si un pôle a été saisi
@@ -222,3 +242,103 @@ function grep() {
         }
 }
 
+//Concordancier---------------------------------------------------------------------------
+function concord() {
+    if (document.getElementById('fileDisplayArea').innerHTML == "") {
+        document.getElementById('logger3').innerHTML = "Il faut d'abord charger un fichier .txt !";
+        } else {
+            document.getElementById('logger3').innerHTML="";
+            let poleInput = document.getElementById('poleID').value;
+            if (poleInput == "") {
+                document.getElementById('logger3').innerHTML = "Il faut d'abord entrer un pôle !";
+                } else {
+                    document.getElementById('logger3').innerHTML="";
+                    let lgInput = document.getElementById('lgID').value;
+                    // Vérifier si une longueur a été saisi, et si > 0
+                    if (lgInput == "" || lgInput < 1) {
+                    // Afficher un message d'erreur
+                        document.getElementById('logger3').innerHTML = "Il faut d'abord entrer une longueur > 0 !";
+                        } else {
+                            // Récupérer le pôle et le convertir en regex
+						  	let poleRegex = new RegExp(poleInput, "gi"); // le "i" indique de ne pas prendre en compte la casse
+						  	//Récupérer la valeur de "lgInput" (longueur de contexte) et conversion en nombre entier
+						  	let long = parseInt(document.getElementById("lgID").value);
+						
+						  	// Chercher le mot et créer une liste de concordance avec la méthode Array.prototype.reduce()
+						  	// On applique .reduce sur global_var_tokens. Le callback prend en paramètres acc : accumulateur initialisé à 0 ;  token : valeur courante ; i : index de la valeur courante
+						  	let concordance = global_var_tokens.reduce((acc, token, i) => {
+						  		// A chaque itération du callback on teste si le "poleRegex" correspond au token courant
+						    	if (poleRegex.test(token)) {
+						    		// Si oui, création du contexte gauche (cLeft) et droit (cRight)
+						      		const cLeft = global_var_tokens.slice(Math.max(0, i - long), i).join(" "); // Ex : si long=10, on sélectionne les tokens de index du token courant -10 à index du token courant, càd les 10 tokens précédant le token courant. Mais si (i - 10) < 0, alors on reprend au début du texte. Math.max(0, i - long) renvoie le maximum entre deux nombres : 0 et (i - long)
+						      		const cRight = global_var_tokens.slice(i + 1, Math.min(global_var_tokens.length, i + long + 1)).join(" "); // De la même manière : puisque i est l'index token courant et qu'on veut sélectionner les 10 tokens suivants, on reprend à partir de (i + 1) jusqu'à (i + long(ici 10) + 1) ou bien jusqu'à la fin du texte si (i + long + 1)>global_var_tokens.length.
+						      		acc.push([cLeft, token, cRight]); // Ajout de (contexte gauche, pôle, contexte droit) à la liste acc
+						   	 		}
+						    		return acc;
+						    		}, []); // [] correspondent à l'accumulateur initialisé, à chaque fois que la fonction callback trouve que "poleRegex" correspond au token courant, elle ajoute une nouvelle entrée dans le tableau
+						
+								  // Afficher les résultat dans une table HTML
+								  let table = document.createElement("table");
+								  table.innerHTML = "<thead><tr><th>Contexte gauche</th><th>Pôle</th><th>Contexte droit</th></tr></thead>";
+								  concordance.forEach(([cLeft, pole, cRight]) => { // Itération sur chaque élément de "concordance" pour remplir la table
+								  	// Insertion d'une nouvelle ligne dans la table
+								  	let row = table.insertRow();
+								  	// Ajouter les données à la ligne
+								    row.innerHTML = "<td>" + cLeft + "</td><td>" + pole + "</td><td>" + cRight + "</td>";
+								    });
+								    
+                             		// Vérifier si des résultats ont été trouvés
+                               		if (table.innerHTML == "<thead><tr><th>Contexte gauche</th><th>Pôle</th><th>Contexte droit</th></tr></thead>") {
+	                                    // Effacer les résulats précédent
+	                                    document.getElementById('page-analysis').innerHTML = "";
+	                                    // Afficher un message d'erreur
+	                                    document.getElementById('logger3').innerHTML = "Aucune correspondance trouvée.";
+                                    	} else {
+                                    		// Effacer tout message d'erreur précédent
+                                          	document.getElementById('logger3').innerHTML = "";
+                                           	// Injecter le tableau résultant dans l'élément HTML
+                                          	document.getElementById("page-analysis").innerHTML = "";
+                                          	document.getElementById("page-analysis").appendChild(table);
+                                          	}
+                                    }
+                        }
+            }
+}
+
+        
+
+
+ 
+
+
+//Nombre de phrases-----------------------------------------
+function nbPhrases() {
+    if (document.getElementById('fileDisplayArea').innerHTML==""){
+        document.getElementById('logger3').innerHTML="Il faut d'abord charger un fichier .txt !";
+        } else {
+            document.getElementById('logger3').innerHTML="";
+            let text = document.getElementById("fileDisplayArea").innerText;
+            let phrase= /[.!?]/g;
+            let nbPhrases = text.split(phrase);
+            let resultat = nbPhrases.length-1;
+            document.getElementById('page-analysis').innerHTML = '<div>Il y a ' + resultat + ' phrases dans ce texte.</div>';
+            }
+}
+
+//Mots les plus longs----------------------------------------------
+function tokenLong() {
+     if (document.getElementById('fileDisplayArea').innerHTML==""){
+        document.getElementById('logger3').innerHTML="Il faut d'abord charger un fichier .txt !";
+        } else {
+            document.getElementById('logger3').innerHTML="";
+            // Trier le tableau 'global_var_tokens' par ordre décroissant de longueur et garder les 10 premiers éléments
+            let tokenSort = global_var_tokens.sort((a, b) => b.length - a.length).slice(0, 10);
+            //let tokenSort = global_var_tokens.sort((a, b) => a.length - b.length).slice(0, 10); //Pour mot le plus court
+            // Convertir chaque token en une ligne de tableau HTML avec sa longueur
+            let map = tokenSort.map(token => '<tr><td>' + token + '</td><td>' + token.length + '</td></tr>').join('');
+            //Tableau HTML
+            let resultat = '<table><tr><th colspan=2><b>Mots les Plus Longs</b></th></tr><tr><th><b>Mot</b></th><th><b>Longueur</b></th></tr>' + map + '</table>';
+            // Injecter le tableau dans l'élément HTML
+            document.getElementById('page-analysis').innerHTML = resultat;
+            }
+}
