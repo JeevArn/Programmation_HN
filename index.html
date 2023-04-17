@@ -59,10 +59,13 @@
                     <center><button id="button_aide" class="fade" onclick="showHide_aide()">Afficher l'aide</button></center>
                     <div id="aide" style="display:none;">
                         <p><b>Voici un mode d'emploi :</b>
-                        </br>Etape 1 : Chargez un texte au format .txt à l'aide du bouton Parcourir.
-                        </br>Etape 2 (facultatif) : Cliquez sur le bouton Segmentation (et précisez les délimiteurs si besoin avant).
-                        </br>Etape 3 : Cliquez sur le bouton Dictionnaire pour obtenir un tableau qui classe les tokens de façon décroissante en fonction du nombre d'occurences.
-                        </br>Etape 4 : Entrez un pôle (une regex ou un mot) puis cliquez sur GREP pour obtenir le tableau des lignes d'occurences.
+                            <ul>
+                                <li>Etape 1 : Chargez un texte au format .txt à l'aide du bouton Parcourir.</li>
+                                <li>Etape 2 (facultatif) : Précisez les délimiteurs de votre choix puis cliquez sur le bouton Segmentation.</li>
+                                <li>Le bouton Dictionnaire : permet d'obtenir un tableau qui classe les tokens de façon décroissante en fonction du nombre d'occurences.</li>
+                                <li>Le bouton GREP : Entrez un pôle (une regex ou un mot) puis cliquez sur GREP pour obtenir le tableau des lignes d'occurences.</li>
+                                <li>Le bouton Concordancier : Entrez un pôle (une regex ou un mot) et une longueur de contexte puis cliquez sur Concordancier pour obtenir un tableau avec le contexte gauche et droit du pôle recherché.</li>
+                            </ul>
                         </p>
                     </div>
                 </div>
