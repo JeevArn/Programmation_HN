@@ -127,6 +127,10 @@ td, th {
 	overflow:scroll;
 }
 
+#chartContainer {
+	padding-top: 5%;
+}
+
 #logger3{
 	color:red;
 }
@@ -183,9 +187,9 @@ td, th {
 }
 
 
-/* Paris 3 lien -------------------------------------------- */
+/* Paris 3 lien rainbowBtn -------------------------------------------- */
 
-a {
+.rainbowBtn {
 	display: block;
 	margin : auto;
 	 width: 200px;
@@ -203,7 +207,7 @@ a {
 	 z-index: 1;
 }
 
-a:hover {
+.rainbowBtn:hover {
  animation: animate 8s linear infinite;
 }
 @keyframes animate {

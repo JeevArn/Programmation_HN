@@ -1,4 +1,4 @@
-
+// Afficher date et heure -----------------------------------------------------------------------
 function date_heure() {
 	let now = new Date();
 	let annee = now.getFullYear();
@@ -10,12 +10,14 @@ function date_heure() {
  	document.getElementById("holder1").innerHTML = "Nous sommes le "+jour+"/"+mois+"/"+annee+" et il est "+heure+"h "+minute+"min "+seconde+"s.";
  	document.getElementById("btn2").style.display= "inline";
  }
-
+ 
+// Mettre en majuscules -----------------------------------------------------------------------
 function maj() {
 	let text = document.getElementById("holder1").innerHTML;
 	document.getElementById("holder1").innerHTML = text.toUpperCase();
 }
 
+// Afficher / Masquer aboutme -----------------------------------------------------------------------
 function showHide_aboutme() {
 	let div = document.getElementById("aboutme");
 	let b = document.getElementById("button_aboutme").innerHTML;
@@ -32,8 +34,11 @@ function showHide_aboutme() {
 }
 
 
-//----------------------OUTIL D'ANALYSE des données dans un fichier-------------------------------
+/*------------------------------------------------------------------------------------------------------------------*/
+//							OUTIL D'ANALYSE des données dans un fichier									//
+/*------------------------------------------------------------------------------------------------------------------*/
 
+// Charger le texte -----------------------------------------------------------------------
 window.onload = function() {
     let fileInput = document.getElementById('fileInput');
     let fileDisplayArea = document.getElementById('fileDisplayArea');
@@ -75,6 +80,7 @@ window.onload = function() {
     });
 }
 
+// Afficher / Masquer l'aide --------------------------------------------------------------------------
 function showHide_aide() {
 	let div = document.getElementById("aide");
 	let b = document.getElementById("button_aide").innerHTML;
@@ -91,7 +97,6 @@ function showHide_aide() {
 }
 
 // VERSION PROF segText() ------------------------------------------------------------------------
-
 function segText() {
     if (document.getElementById('fileDisplayArea').innerHTML==""){
         //alert("Il faut d'abord charger un fichier .txt !"); //autre possibilité
@@ -160,8 +165,7 @@ function segText() {
 //.textContent permet de récupérer ou définir le contenu textuel d'un élément, en ignorant les balises HTML. Supprime les espaces supplémentaires et les retours chariot.
 //.innerText est similaire à .textContent, mais tient compte de la mise en forme CSS appliquée à l'élément, ce qui peut parfois affecter le texte affiché. Inclue des espaces et des retours chariot supplémentaires.
 
-
-//Dictionnaire-----------------------------------------------------------------
+// Dictionnaire -----------------------------------------------------------------
 function dictionnaire() {
     if (document.getElementById('fileDisplayArea').innerHTML==""){
         //alert("Il faut d'abord charger un fichier .txt !");
@@ -170,34 +174,26 @@ function dictionnaire() {
             document.getElementById('logger3').innerHTML="";
             let tokenFreq = {};
             let tokens = global_var_tokens;
-              
             // Compter la fréquence de chaque token
             tokens.forEach(token => tokenFreq[token] = (tokenFreq[token] || 0) + 1);
-              
             // Convertir l'objet en tableau de paires clé-valeur
             let freqPairs = Object.entries(tokenFreq);
-              
             // Trier le tableau par fréquence décroissante
             freqPairs.sort((a, b) => b[1] - a[1]);
-              
             // Ajouter l'entête du tableau
             let tableArr = [['<b>Token</b>', '<b>Fréquence</b>']];
-              
             // Créer un tableau de tableaux contenant les tokens et leurs fréquences
             let tableData = freqPairs.map(pair => [pair[0], pair[1]]);
-              
             // Concaténer les deux tableaux
             let finalTable = tableArr.concat(tableData);
-              
             // Créer le tableau HTML à partir du tableau final
             let tableHtml = finalTable.map(row => '<tr><td>' + row.join('</td><td>') + '</td></tr>').join('');
-              
             // Afficher le tableau HTML dans la page
             document.getElementById('page-analysis').innerHTML = '<table>' + tableHtml + '</table>';
         }
 }
 
-//GREP---------------------------------------------------------------------
+// GREP ---------------------------------------------------------------------
 function grep() {
     // Vérifier si un fichier .txt a été chargé
     if (document.getElementById('fileDisplayArea').innerHTML == "") {
@@ -242,7 +238,7 @@ function grep() {
         }
 }
 
-//Concordancier---------------------------------------------------------------------------
+// Concordancier ---------------------------------------------------------------------------
 function concord() {
     if (document.getElementById('fileDisplayArea').innerHTML == "") {
         document.getElementById('logger3').innerHTML = "Il faut d'abord charger un fichier .txt !";
@@ -255,23 +251,23 @@ function concord() {
                     document.getElementById('logger3').innerHTML="";
                     let lgInput = document.getElementById('lgID').value;
                     // Vérifier si une longueur a été saisi, et si > 0
-                    if (lgInput == "" || lgInput < 1) {
+                    if (lgInput == "" || lgInput < 1 || isNaN(lgInput)==true) { // je ne sais pas pourquoi mais (lgInput == "" || lgInput < 1 || Number.isInteger(lgInput)==false) ne semble pas fonctionner correctement
                     // Afficher un message d'erreur
                         document.getElementById('logger3').innerHTML = "Il faut d'abord entrer une longueur > 0 !";
                         } else {
                             // Récupérer le pôle et le convertir en regex
-						  	let poleRegex = new RegExp(poleInput, "gi"); // le "i" indique de ne pas prendre en compte la casse
+						  	let poleRegex = new RegExp("^" + poleInput + "$", "gi"); // le "i" indique de ne pas prendre en compte la casse, ^ et $ pour délimiter le mot
 						  	//Récupérer la valeur de "lgInput" (longueur de contexte) et conversion en nombre entier
 						  	let long = parseInt(document.getElementById("lgID").value);
 						
-						  	// Chercher le mot et créer une liste de concordance avec la méthode Array.prototype.reduce()
+						  	// Chercher le pole et créer une liste de concordance avec la méthode Array.prototype.reduce()
 						  	// On applique .reduce sur global_var_tokens. Le callback prend en paramètres acc : accumulateur initialisé à 0 ;  token : valeur courante ; i : index de la valeur courante
 						  	let concordance = global_var_tokens.reduce((acc, token, i) => {
 						  		// A chaque itération du callback on teste si le "poleRegex" correspond au token courant
 						    	if (poleRegex.test(token)) {
 						    		// Si oui, création du contexte gauche (cLeft) et droit (cRight)
-						      		const cLeft = global_var_tokens.slice(Math.max(0, i - long), i).join(" "); // Ex : si long=10, on sélectionne les tokens de index du token courant -10 à index du token courant, càd les 10 tokens précédant le token courant. Mais si (i - 10) < 0, alors on reprend au début du texte. Math.max(0, i - long) renvoie le maximum entre deux nombres : 0 et (i - long)
-						      		const cRight = global_var_tokens.slice(i + 1, Math.min(global_var_tokens.length, i + long + 1)).join(" "); // De la même manière : puisque i est l'index token courant et qu'on veut sélectionner les 10 tokens suivants, on reprend à partir de (i + 1) jusqu'à (i + long(ici 10) + 1) ou bien jusqu'à la fin du texte si (i + long + 1)>global_var_tokens.length.
+						      		let cLeft = global_var_tokens.slice(Math.max(0, i - long), i).join(" "); // Ex : si long=10, on sélectionne les tokens de index du token courant -10 à index du token courant, càd les 10 tokens précédant le token courant. Mais si (i - 10) < 0, alors on reprend au début du texte. Math.max(0, i - long) renvoie le maximum entre deux nombres : 0 et (i - long)
+						      		let cRight = global_var_tokens.slice(i + 1, Math.min(global_var_tokens.length, i + long + 1)).join(" "); // De la même manière : puisque i est l'index token courant et qu'on veut sélectionner les 10 tokens suivants, on reprend à partir de (i + 1) jusqu'à (i + long(ici 10) + 1) ou bien jusqu'à la fin du texte si (i + long + 1)>global_var_tokens.length.
 						      		acc.push([cLeft, token, cRight]); // Ajout de (contexte gauche, pôle, contexte droit) à la liste acc
 						   	 		}
 						    		return acc;
@@ -305,13 +301,7 @@ function concord() {
             }
 }
 
-        
-
-
- 
-
-
-//Nombre de phrases-----------------------------------------
+// Nombre de phrases -----------------------------------------
 function nbPhrases() {
     if (document.getElementById('fileDisplayArea').innerHTML==""){
         document.getElementById('logger3').innerHTML="Il faut d'abord charger un fichier .txt !";
@@ -325,7 +315,7 @@ function nbPhrases() {
             }
 }
 
-//Mots les plus longs----------------------------------------------
+// Mots les plus longs ----------------------------------------------
 function tokenLong() {
      if (document.getElementById('fileDisplayArea').innerHTML==""){
         document.getElementById('logger3').innerHTML="Il faut d'abord charger un fichier .txt !";
@@ -341,4 +331,70 @@ function tokenLong() {
             // Injecter le tableau dans l'élément HTML
             document.getElementById('page-analysis').innerHTML = resultat;
             }
+}
+
+// Pie Chart (mots les plus fréquents, moins les stopwords) --------------------------------------------------
+function pieChart() {
+	if (document.getElementById('fileDisplayArea').innerHTML=="") {
+        document.getElementById('logger3').innerHTML="Il faut d'abord charger un fichier .txt !";
+      } else {
+        document.getElementById('logger3').innerHTML="";
+        // Récupérer les stopwords
+	    var stopwordInput = document.getElementById("stopwordID").value;
+	    var stopwords = stopwordInput.split(",");
+	
+	    // Filtrer les stopwords de global_var_tokens
+	    var filteredTokens = global_var_tokens.filter(function(token) {
+	      return stopwords.indexOf(token) === -1;
+	    });
+	
+	    // Compter le nombre d'occurences de chaque token dans "filteredTokens"
+	    var count = {};
+	    filteredTokens.forEach(function(token) {
+	      count[token] = (count[token] || 0) + 1;
+	    });
+	
+	    // Créer un tableau "chartData" des 30 tokens les plus fréquents
+	    var chartData = [];
+	    var sortedTokens = Object.keys(count).sort(function(a, b) {
+	      return count[b] - count[a];
+	    }).slice(0, 30);
+	    sortedTokens.forEach(function(token) {
+	      chartData.push({
+	        label: token,
+	        y: count[token]
+	      });
+	    });
+	
+	    // Creation du graphique CanvasJS
+	    var chart = new CanvasJS.Chart("chartContainer", {
+	      animationEnabled: true,
+	      backgroundColor: "transparent",
+	      title: {
+	        text: "Mots les plus fréquents"
+	      },
+	      data: [{
+	        type: "pie",
+	        showInLegend: true,
+	        legendText: "{label}",
+	        indexLabelFontSize: 14,
+	        indexLabel: "{label} - {y}",
+	        dataPoints: chartData
+	      }]
+	    });
+	
+	    chart.render();
+	  }
+}
+
+// kujuj() rajoute "uj" à chaque token ------------------------------------------------
+function kujuj() {
+	if (document.getElementById('fileDisplayArea').innerHTML=="") {
+        document.getElementById('logger3').innerHTML="Il faut d'abord charger un fichier .txt !";
+      } else {
+      	alert("this is a joke");
+      	let kujujTokens = global_var_tokens.map(token => token + "uj");
+		let kujujText = kujujTokens.join(" ");
+		document.getElementById('page-analysis').innerHTML = kujujText;
+	}
 }

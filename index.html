@@ -5,8 +5,9 @@
 			<meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
 			<link rel="stylesheet" href="assets/css/style.css">
 			<script src="assets/js/main.js"></script>
-			<script src="assets/js/canvasjs-3.7.5/canvasjs.min.js"></script>
-			<title></title>
+			<script src="assets/js/canvasjs.min.js"></script>
+			<title>Mon site</title>
+			<link rel="icon" href="assets/img/favicon.png" type="image/icon type">
 		</head>
         <body>
         	<div id="page">
@@ -65,6 +66,10 @@
                                 <li>Le bouton Dictionnaire : permet d'obtenir un tableau qui classe les tokens de façon décroissante en fonction du nombre d'occurences.</li>
                                 <li>Le bouton GREP : Entrez un pôle (une regex ou un mot) puis cliquez sur GREP pour obtenir le tableau des lignes d'occurences.</li>
                                 <li>Le bouton Concordancier : Entrez un pôle (une regex ou un mot) et une longueur de contexte puis cliquez sur Concordancier pour obtenir un tableau avec le contexte gauche et droit du pôle recherché.</li>
+                                <li>Le bouton Nombre de phrases : cliquez et il affichera le nombre de phrases.</li>
+                                <li>Le bouton Mots les plus longs : cliquez et il affichera les 10 mots les plus longs du texte.</li>
+                                <li>Le bouton Pie Chart : Saisissez des stopwords et cliquez sur le bouton pour afficher un graphique des 30 mots les plus fréquents dans le texte hors stopwords.</li>
+                                <li>Le bouton /kujuj/ : don't mind me...</li>
                             </ul>
                         </p>
                     </div>
@@ -95,6 +100,12 @@
                         &nbsp;
                         <input type="text" value="10" name="lg" id="lgID" size="10" />
                     </small>
+                    <br/>
+                    <small>
+                        <label for="stopwordID" class="mylabel">Stopwords</label>
+                        &nbsp;
+                        <input type="text" value="de,le,la,les,à,et,des,un,une,du,que,en,l,que,qu,d,s,se,ne,n,ce,me,sa" name="stopwords" id="stopwordID" size="60" />
+                    </small>
                     <br />
                     <br />
                     <button class="special" onclick="alert('Voici un site qui permet d\'analyser des textes.');"><span>Bonjour</span></button>
@@ -104,11 +115,10 @@
                     <button class="fade" id="btnDict" onclick="dictionnaire()"><span>Dictionnaire</span></button>
                     <button class="fade" id="btnGrep" onclick="grep()"><span>GREP</span></button>
                     <button class="fade" onclick="concord()"><span>Concordancier</span></button>
-                    <button class="fade" onclick="alert('Je ne fais rien, changez-moi !')"><span>action 4</span></button>
-                    <button class="fade" onclick="alert('Je ne fais rien, changez-moi !')"><span>action 5</span></button>
-                    <button class="fade" onclick="alert('Je ne fais rien, changez-moi !')"><span>action 6</span></button>
+                    <button class="fade" onclick="kujuj()"><span>/kujuj/</span></button>
                     <button class="fade" onclick="nbPhrases()"><span>Nombre de phrases</span></button>
                     <button class="fade" onclick="tokenLong()"><span>Mots les plus longs</span></button>
+                    <button class="fade" onclick="pieChart()"><span>Pie Chart</span></button>
                 </p>
             </div>
             <center>
@@ -120,12 +130,13 @@
             <div id="Global">
                 <div id="fileDisplayArea"></div>
                 <div id="page-analysis"></div>
+                <div id="chartContainer" style="height: 300px; width: 100%;"></div>
             </div>
         </div>
                 <!-- FIN Analyse des données dans un fichier -->
                 <footer>
                 <br><br>
-                	<a href="http://www.univ-paris3.fr/">site de paris 3</a>
+                	<a href="http://www.univ-paris3.fr/" class="rainbowBtn">site de paris 3</a>
                 <br>
                 </footer>
         </body>
